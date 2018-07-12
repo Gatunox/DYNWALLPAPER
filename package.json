@@ -1,0 +1,14 @@
+{
+  "name": "dynwallpaper",
+  "version": "1.0.0",
+  "description": "Dynamic Wallapaer, The Wallpaper will adjust accoring the curren Winwdos Spotlight log in wallpaper",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "infiniteloopcode.com",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^2.0.4"
+  }
+}
