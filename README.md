@@ -1,2 +1,2 @@
-# DYNWALLPAPER
+# Dynwallpaper
 Dynamic Wallpepers
