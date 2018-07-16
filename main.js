@@ -1,4 +1,5 @@
 const {app, Menu, Tray, BrowserWindow} = require('electron')
+var fs = require('fs');
 var path = require('path')
   
   // Keep a global reference of the window object, if you don't, the window will
@@ -32,7 +33,7 @@ var path = require('path')
     win.loadFile('index.html')
   
     // Open the DevTools.
-    // win.webContents.openDevTools()
+    //  win.webContents.openDevTools()
   
     // Emitted when the window is closed.
     win.on('closed', () => {
@@ -85,3 +86,9 @@ var path = require('path')
   
   // In this file you can include the rest of your app's specific main process
   // code. You can also put them in separate files and require them here.
+ 
+  var array = fs.readFileSync('README.md').toString().split("\n");
+  console.log("Reading Direectory...");
+  for(i in array) {
+      console.log(array[i]);
+  }
