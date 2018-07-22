@@ -10,8 +10,8 @@
             "request": "launch",
             "cwd": "${workspaceRoot}",
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
-            "protocol": "inspector",
-            "outputCapture": "std",
+            "protocol": "inspector", // Added in order to see the console on VSC
+            "outputCapture": "std",  // Added in order to see the console on VSC
             "windows": {
               "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
             },

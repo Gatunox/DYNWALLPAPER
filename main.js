@@ -30,7 +30,7 @@ var path = require('path')
     //console.log(appIcon, win)
   
     // and load the index.html of the app.
-    win.loadFile('index.html')
+    win.loadFile('./index.html')
   
     // Open the DevTools.
     //  win.webContents.openDevTools()
@@ -87,8 +87,54 @@ var path = require('path')
   // In this file you can include the rest of your app's specific main process
   // code. You can also put them in separate files and require them here.
  
-  var array = fs.readFileSync('README.md').toString().split("\n");
-  console.log("Reading Direectory...");
-  for(i in array) {
-      console.log(array[i]);
+  // var array = fs.readFileSync('README.md').toString().split("\n");
+  // console.log("Reading Direectory...");
+  // for(i in array) {
+  //     console.log(array[i]);
+  // }
+  
+
+  var fullpath = path.join(app.getPath("home"), '/appdata/local/Packages/Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy/LocalState/Assets');
+  StartWatcher(fullpath);
+
+ 
+  function StartWatcher(fullpath){
+    var chokidar = require("chokidar");
+  
+    console.log("Wathing changes on " + fullpath);
+
+    var watcher = chokidar.watch(fullpath, {
+        ignored: /[\/\\]\./,
+        persistent: true
+    });
+
+    function onWatcherReady(){
+      console.info('From here can you check for real changes, the initial scan has been completed.');
+    }
+          
+    // Declare the listeners of the watcher
+    watcher
+    .on('add', function(fullpath) {
+          console.log('File', fullpath, 'has been added');
+    })
+    .on('addDir', function(fullpath) {
+          console.log('Directory', fullpath, 'has been added');
+    })
+    .on('change', function(fullpath) {
+         console.log('File', fullpath, 'has been changed');
+    })
+    .on('unlink', function(fullpath) {
+         console.log('File', fullpath, 'has been removed');
+    })
+    .on('unlinkDir', function(fullpath) {
+         console.log('Directory', fullpath, 'has been removed');
+    })
+    .on('error', function(error) {
+         console.log('Error happened', error);
+    })
+    .on('ready', onWatcherReady)
+    .on('raw', function(event, fullpath, details) {
+         // This event should be triggered everytime something happens.
+         console.log('Raw event info:', event, path, details);
+    });
   }

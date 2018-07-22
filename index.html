@@ -1,13 +1,40 @@
 <!DOCTYPE html>
   <html>
     <head>
-      <meta charset="UTF-8">
-      <title>Hello World!</title>
+        <meta charset="UTF-8">
+        <title>Windows Lockscreen Image Saver</title> 
+        <link rel="stylesheet" href="main.css" type="text/css" />
+
+        <script type="text/javascript" src="index.js" ></script>
+        <link href="./node_modules/winjs/css/ui-dark.css" rel="stylesheet" />
+
+        <script src="./node_modules/winjs/js/base.js"></script>
+        <script src="./node_modules/winjs/js/ui.js"></script> 
     </head>
     <body>
-      <h1>Hello World!</h1>
-      We are using node <script>document.write(process.versions.node)</script>,
-      Chrome <script>document.write(process.versions.chrome)</script>,
-      and Electron <script>document.write(process.versions.electron)</script>.
+        <div id="app">
+            <div class="splitView" data-win-control="WinJS.UI.SplitView" data-win-options="{panePlacement:'right'}">
+                <!-- Pane area -->
+                <div>
+                    <div class="header">
+                        <button
+                            class="win-splitviewpanetoggle"
+                            data-win-control="WinJS.UI.SplitViewPaneToggle"
+                            data-win-options="{ splitView: select('.splitView') }"
+                        ></button>
+                        <div class="title">SplitView Pane area</div>
+                    </div>
+        
+                    <div class="nav-commands">
+                        <div data-win-control="WinJS.UI.NavBarCommand" data-win-options="{ label: 'Home', icon: 'home'}"></div>
+                        <div data-win-control="WinJS.UI.NavBarCommand" data-win-options="{ label: 'Favorite', icon: 'favorite'}"></div>
+                        <div data-win-control="WinJS.UI.NavBarCommand" data-win-options="{ label: 'Settings', icon: 'settings'}"></div>
+                    </div>
+                </div>
+        
+                <!-- Content area -->
+                <div class="contenttext"><h2 class="win-h2">SplitView Content area</h2> </div>
+            </div>
+        </div>
     </body>
-  </html>
+</html>
