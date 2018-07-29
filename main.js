@@ -1,140 +1,186 @@
 const {app, Menu, Tray, BrowserWindow} = require('electron')
-var fs = require('fs');
-var path = require('path')
+const path = require('path')
+const fs = require('fs')
+const os = require('os')
+const sizeOf = require('image-size');
   
-  // Keep a global reference of the window object, if you don't, the window will
-  // be closed automatically when the JavaScript object is garbage collected.
-  let win
-  
-  function createWindow () {
+// Keep a global reference of the window object, if you don't, the window will
+// be closed automatically when the JavaScript object is garbage collected.
+let win
 
-    var icon = path.join(__dirname, 'assets/icons/icon.png')
-    tray = new Tray(icon)
-    const contextMenu = Menu.buildFromTemplate([
-      {label: 'Item1', type: 'radio'},
-      {label: 'Item2', type: 'radio'},
-      {label: 'Item3', type: 'radio', checked: true},
-      {label: 'Item4', type: 'radio'}
-    ])
-    tray.setToolTip('This is my application.')
-    tray.setContextMenu(contextMenu)
+function createWindow () {
 
-    // Create the browser window.
-    win = new BrowserWindow({
-      width: 800,
-      iheight: 600,
-      icon: icon
-    })
-    
+  var icon = path.join(__dirname, 'assets/icons/icon.png')
+  tray = new Tray(icon)
+  const contextMenu = Menu.buildFromTemplate([
+    {label: 'Item1', type: 'radio'},
+    {label: 'Item2', type: 'radio'},
+    {label: 'Item3', type: 'radio', checked: true},
+    {label: 'Item4', type: 'radio'}
+  ])
+  tray.setToolTip('This is my application.')
+  tray.setContextMenu(contextMenu)
 
-    //console.log(appIcon, win)
+  // Create the browser window.
+  win = new BrowserWindow({
+    width: 800,
+    iheight: 600,
+    icon: icon
+  })
   
-    // and load the index.html of the app.
-    win.loadFile('./index.html')
-  
-    // Open the DevTools.
-    //  win.webContents.openDevTools()
-  
-    // Emitted when the window is closed.
-    win.on('closed', () => {
-      // Dereference the window object, usually you would store windows
-      // in an array if your app supports multi windows, this is the time
-      // when you should delete the corresponding element.
-      win = null
-    })
 
-    win.webContents.on("devtools-opened", () => { 
-    	win.webContents.closeDevTools(); 
-    });
+  //console.log(appIcon, win)
+
+  // and load the index.html of the app.
+  win.loadFile('./index.html')
+
+  // Open the DevTools.
+  // win.webContents.openDevTools()
+
+  // Emitted when the window is closed.
+  win.on('closed', () => {
+    // Dereference the window object, usually you would store windows
+    // in an array if your app supports multi windows, this is the time
+    // when you should delete the corresponding element.
+    win = null
+  })
+
+  // win.webContents.on("devtools-opened", () => { 
+  // 	win.webContents.closeDevTools(); 
+  // });
+}
+
+
+var shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
+  // Someone tried to run a second instance, we should focus our window.
+  if (win) {
+    if (win.isMinimized()) win.restore();
+    win.focus();
   }
-  
+});
 
-  var shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
-    // Someone tried to run a second instance, we should focus our window.
-    if (win) {
-      if (win.isMinimized()) win.restore();
-      win.focus();
-    }
+if (shouldQuit) {
+  app.quit();
+  return;
+}
+
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+app.on('ready', createWindow)
+
+// Quit when all windows are closed.
+app.on('window-all-closed', () => {
+  // On macOS it is common for applications and their menu bar
+  // to stay active until the user quits explicitly with Cmd + Q
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
+})
+
+app.on('activate', () => {
+  // On macOS it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  if (win === null) {
+    createWindow()
+  }
+})
+
+// In this file you can include the rest of your app's specific main process
+// code. You can also put them in separate files and require them here.
+
+// var array = fs.readFileSync('README.md').toString().split("\n");
+// console.log("Reading Direectory...");
+// for(i in array) {
+//     console.log(array[i]);
+// }
+
+var appImgsFolder = createImagesFolder();
+function createImagesFolder() {
+  let defaultImagesFolderPath = (app.getPath('pictures')+'/SpotlightWallpapers').replace(/\\/g, '/'); 
+                                          //replaces "frontlaces" with backslashes ^^^                           
+  //check if default folder already exists
+  if(!fs.existsSync(defaultImagesFolderPath)) { 
+    //make images folder if it does not exist
+    fs.mkdirSync(defaultImagesFolderPath, '0o765') 
+    return defaultImagesFolderPath;
+  } else { 
+    //return default folder if it already exists
+    return defaultImagesFolderPath; 
+  }
+}
+
+console.log("app.getPath(home) = " + app.getPath("home"));
+var fullpath = path.join(app.getPath("home"), '/appdata/local/Packages/Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy/LocalState/Assets');
+StartWatcher(fullpath);
+
+
+function StartWatcher(fullpath){
+  var chokidar = require("chokidar");
+
+  console.log("Wathing changes on " + fullpath);
+
+  var watcher = chokidar.watch(fullpath, {
+    ignored: /[\/\\]\./,
+    persistent: true
   });
-  
-  if (shouldQuit) {
-    app.quit();
-    return;
+
+  function onWatcherReady(){
+    console.info('From here can you check for real changes, the initial scan has been completed.');
   }
-
-  // This method will be called when Electron has finished
-  // initialization and is ready to create browser windows.
-  // Some APIs can only be used after this event occurs.
-  app.on('ready', createWindow)
-  
-  // Quit when all windows are closed.
-  app.on('window-all-closed', () => {
-    // On macOS it is common for applications and their menu bar
-    // to stay active until the user quits explicitly with Cmd + Q
-    if (process.platform !== 'darwin') {
-      app.quit()
-    }
+        
+  // Declare the listeners of the watcher
+  watcher
+  .on('add', function(fullPathFileName) {
+    //console.log('File', fullPathFileName, 'has been added');
+    updateImagesFolder(fullPathFileName, appImgsFolder)
   })
-  
-  app.on('activate', () => {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (win === null) {
-      createWindow()
-    }
+  .on('addDir', function(fullPathFileName) {
+    console.log('Directory', fullPathFileName, 'has been added');
   })
-  
-  // In this file you can include the rest of your app's specific main process
-  // code. You can also put them in separate files and require them here.
- 
-  // var array = fs.readFileSync('README.md').toString().split("\n");
-  // console.log("Reading Direectory...");
-  // for(i in array) {
-  //     console.log(array[i]);
-  // }
-  
+  .on('change', function(fullPathFileName) {
+    console.log('File', fullPathFileName, 'has been changed');
+  })
+  .on('unlink', function(fullPathFileName) {
+    console.log('File', fullPathFileName, 'has been removed');
+  })
+  .on('unlinkDir', function(fullPathFileName) {
+    console.log('Directory', fullPathFileName, 'has been removed');
+  })
+  .on('error', function(error) {
+    console.log('Error happened', error);
+  })
+  .on('ready', onWatcherReady)
+  .on('raw', function(event, fullpath, details) {
+    // This event should be triggered everytime something happens.
+    console.log('Raw event info:', event, path, details);
+  });
+} 
 
-  var fullpath = path.join(app.getPath("home"), '/appdata/local/Packages/Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy/LocalState/Assets');
-  StartWatcher(fullpath);
+function updateImagesFolder(srcImgesFolder, destImgesFolder) {
+  let dimensions = sizeOf(srcImgesFolder);
+  let filename = srcImgesFolder.split('\\').pop().split('/').pop();
+  console.log('Image', filename, 'info, width:',dimensions.width, ', height:', dimensions.height);
 
- 
-  function StartWatcher(fullpath){
-    var chokidar = require("chokidar");
-  
-    console.log("Wathing changes on " + fullpath);
-
-    var watcher = chokidar.watch(fullpath, {
-        ignored: /[\/\\]\./,
-        persistent: true
+  let w = dimensions.width; // the width of the image from Jimp obj
+  let h = dimensions.height; //height of image from jimp obj
+  //check if image is rectangular and width is big enuf to be wallpaper && is not already in the imgs folder
+  if (h<w && w>1000 && !fsExistsSync(`${filename}.jpg`)) { 
+    console.log('Copying file', filename);
+    fs.copyFile(srcImgesFolder, path.join(destImgesFolder,`${filename}.jpg`), err => {
+      if (err) throw err;
+      console.log('success');
     });
+  } 
+}
 
-    function onWatcherReady(){
-      console.info('From here can you check for real changes, the initial scan has been completed.');
-    }
-          
-    // Declare the listeners of the watcher
-    watcher
-    .on('add', function(fullpath) {
-          console.log('File', fullpath, 'has been added');
-    })
-    .on('addDir', function(fullpath) {
-          console.log('Directory', fullpath, 'has been added');
-    })
-    .on('change', function(fullpath) {
-         console.log('File', fullpath, 'has been changed');
-    })
-    .on('unlink', function(fullpath) {
-         console.log('File', fullpath, 'has been removed');
-    })
-    .on('unlinkDir', function(fullpath) {
-         console.log('Directory', fullpath, 'has been removed');
-    })
-    .on('error', function(error) {
-         console.log('Error happened', error);
-    })
-    .on('ready', onWatcherReady)
-    .on('raw', function(event, fullpath, details) {
-         // This event should be triggered everytime something happens.
-         console.log('Raw event info:', event, path, details);
-    });
+
+function fsExistsSync(filepath) {
+  try {
+    fs.accessSync(filepath);
+    return true;
+  } catch (e) {
+    return false;
   }
+}
+

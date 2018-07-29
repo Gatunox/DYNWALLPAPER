@@ -20,6 +20,15 @@
         display: inline-block;
     }
 
+    #app .win-type-title {
+        padding-top: 1%;
+        font-size: 25px;
+        left: 50px;
+        margin-top: 6px;
+        vertical-align: middle;
+        display: inline-block;
+    }
+
     #app .nav-commands {
         margin-top: 20px;
     }
