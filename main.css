@@ -3,35 +3,35 @@
     height: 100%;
 }
 
-    #app .win-splitviewpanetoggle {
-        float: left;
-    }
+#app .win-splitviewpanetoggle {
+    float: left;
+}
 
-    /* SplitView pane content style*/
-    #app .header {
-        white-space: nowrap;
-    }
+/* SplitView pane content style*/
+#app .header {
+    white-space: nowrap;
+}
 
-    #app .title {
-        font-size: 25px;
-        left: 50px;
-        margin-top: 6px;
-        vertical-align: middle;
-        display: inline-block;
-    }
+#app .title {
+    font-size: 25px;
+    left: 50px;
+    margin-top: 6px;
+    vertical-align: middle;
+    display: inline-block;
+}
 
-    #app .win-type-title {
-        padding-top: 1%;
-        font-size: 25px;
-        left: 50px;
-        margin-top: 6px;
-        vertical-align: middle;
-        display: inline-block;
-    }
+#app .win-type-title {
+    padding-top: 1%;
+    font-size: 25px;
+    left: 50px;
+    margin-top: 6px;
+    vertical-align: middle;
+    display: inline-block;
+}
 
-    #app .nav-commands {
-        margin-top: 20px;
-    }
+#app .nav-commands {
+    margin-top: 20px;
+}
 
 .win-navbarcommand-button {
     background-color: transparent;
@@ -50,11 +50,58 @@
 
 /*SplitView content style*/
 #app .win-splitview-content {
-    background-color: rgb(112,112,112);
+    background-color: rgba(112, 112, 112, 0.5);
 }
 
 #app .contenttext {
     margin-left: 20px;
     margin-top: 6px;
+}
+
+body{
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(248, 248, 248, 0.158);
+}
+
+#imgs-area{
+    overflow: scroll;
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    padding: 0px 0px 20px 20px;
+}
+
+.gallery-img {
+    transition: 0.3s;
+    flex-grow: 4;
+    width: 240px;
+    height: 180px;
+    max-height: 180px;
+    margin-right: 20px;
+    margin-top: 20px;
+    background-color: black;
+}
+
+
+
+/*crude fix to a last-child flexbox issue
+prevents last child from growing to entire width;
+*/
+.gallery-img:last-child{
+    flex-grow: 2;
+    max-width: 48%;
+    min-width: 48%;
+}
+
+.gallery-img:hover {
+    border: 1px solid;
+    box-shadow: 5px 8px 18px rgba(136, 136, 136, 0.699);
 }
 

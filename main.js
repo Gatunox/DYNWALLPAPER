@@ -48,6 +48,23 @@ function createWindow () {
   // win.webContents.on("devtools-opened", () => { 
   // 	win.webContents.closeDevTools(); 
   // });
+
+  //removes default main menu for the app
+  Menu.setApplicationMenu(null);
+
+  win.webContents.on('did-finish-load', () => {
+
+    //fetch filenames in the images folder after it has been updated
+        var imgsFolderFiles =  fs.readdirSync(appImgsFolder);
+    
+    //payload defines the message we send to the ui window
+        var payload = {
+            imgsFolder : appImgsFolder, 
+            imgsFolderFiles : imgsFolderFiles }
+            
+        //msg sent as an event called 'refresh images' with the payload
+        win.webContents.send('refreshImages', payload );
+     })
 }
 
 
@@ -67,7 +84,12 @@ if (shouldQuit) {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', () => {
+  createWindow()
+  win.webContents.on('did-finish-load', () => {
+    win.webContents.send('ping', 'whoooooooh!')
+  })
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -86,6 +108,15 @@ app.on('activate', () => {
   }
 })
 
+
+app.on('quit', () => {
+  // Emitted when the application is quitting.
+  // Note: On Windows, this event will not be emitted if the app is closed due 
+  // to a shutdown/restart of the system or a user logout
+  // tray.destroy()
+  console.log("!!! Quit !!! ");
+})
+
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
@@ -94,6 +125,7 @@ app.on('activate', () => {
 // for(i in array) {
 //     console.log(array[i]);
 // }
+
 
 var appImgsFolder = createImagesFolder();
 function createImagesFolder() {
