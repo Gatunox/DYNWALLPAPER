@@ -1,8 +1,27 @@
-const {app, Menu, Tray, BrowserWindow} = require('electron')
+const {app, Menu, Tray, ipcMain, BrowserWindow} = require('electron')
 const path = require('path')
 const fs = require('fs')
 const os = require('os')
 const sizeOf = require('image-size');
+const AutoLaunch = require('auto-launch');
+
+
+var appAutoLauncher = new AutoLaunch({
+  name: 'spotlight-saver',
+  isHidden: true,
+});
+
+appAutoLauncher.isEnabled()
+.then(function(isEnabled){
+  if(isEnabled){
+      return;
+  }
+  appAutoLauncher.enable();
+})
+.catch(function(err){
+  console.log(err)
+});
+
   
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -81,17 +100,17 @@ function createWindow () {
 
   win.webContents.on('did-finish-load', () => {
 
-    //fetch filenames in the images folder after it has been updated
-        var imgsFolderFiles =  fs.readdirSync(appImgsFolder);
-    
-    //payload defines the message we send to the ui window
-        var payload = {
-            imgsFolder : appImgsFolder, 
-            imgsFolderFiles : imgsFolderFiles }
-            
-        //msg sent as an event called 'refresh images' with the payload
-        win.webContents.send('refreshImages', payload );
-     })
+  //fetch filenames in the images folder after it has been updated
+  var imgsFolderFiles =  fs.readdirSync(appImgsFolder);
+  
+  //payload defines the message we send to the ui window
+  var payload = {
+      imgsFolder : appImgsFolder, 
+      imgsFolderFiles : imgsFolderFiles }
+      
+  //msg sent as an event called 'refresh images' with the payload
+  win.webContents.send('refreshImages', payload );
+  })
 }
 
 
@@ -239,3 +258,6 @@ function fsExistsSync(filepath) {
   }
 }
 
+ipcMain.on('changeDesktopWallpaper',(event, imgPath) => {
+  console.log("changeDesktopWallpaper event");
+})

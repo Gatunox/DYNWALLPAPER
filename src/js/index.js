@@ -49,6 +49,16 @@ ipcRenderer.on('refreshImages', (event, payload) => {
 })
 
 WinJS.UI.processAll().done(function () {
-//  // var splitView = document.querySelector(".splitView").winControl;
-//   //new WinJS.UI._WinKeyboard(splitView.paneElement); // Temporary workaround: Draw keyboard focus visuals on NavBarCommands
+  var splitView = document.querySelector(".splitView").winControl;
+  new WinJS.UI._WinKeyboard(splitView.paneElement); // Temporary workaround: Draw keyboard focus visuals on NavBarCommands
 });
+
+document.getElementById('openFavoritesBtn').addEventListener('click', function(){
+  console.log("Sending Event - openFolderBtn")
+  ipcRenderer.send('showFavoritesBtn')
+})
+
+document.getElementById('aboutSoftwareBtn').addEventListener('click', function(){
+  console.log("Sending Event - aboutSoftwareBtn")
+  ipcRenderer.send('showAboutInfo')
+})
