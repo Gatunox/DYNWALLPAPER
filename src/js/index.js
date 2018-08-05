@@ -7,9 +7,10 @@ function refreshImages(imagesFolder, imgsFolderFiles) {
       //loop through each of the files 
       imgsFolderFiles.forEach(imageFile => {
       //make a div tag that renders the images as the div background image
-      imgsHTML +=  `<div class="gallery-img" style="background-image: url('${imagesFolder}/${imageFile}'); background-size: 100% 100%;" >
-                    </div>  
-                   `                
+
+      imgsHTML +=  `<div class="gallery-img" style="background-image: url('${imagesFolder}/${imageFile}'); background-size: 100% 100%;" onmouseout="hideWallpaperBtn(this)" onmouseover="showWallpaperBtn(this)">
+                      <button class="btn info" onclick="setAsWallpaper('${imagesFolder}/${imageFile}')">Set as Desktop Wallpaper</button>
+                    </div>` 
       });
 
   } else {
@@ -24,7 +25,25 @@ function refreshImages(imagesFolder, imgsFolderFiles) {
   if (imgsHTML != '') { imgsArea.innerHTML = imgsHTML; }
 }
 
+function setAsWallpaper(file) {
+  console.log('will set '+file+' as wallpaper');
+  ipcRenderer.send('changeDesktopWallpaper',  file);
+}
+
+function showWallpaperBtn(div) {
+  var wallpaperBtn = div.querySelector('button');
+  wallpaperBtn.style.opacity = '1';
+  wallpaperBtn.style.height = '50px';
+}
+
+function hideWallpaperBtn(div) {
+  var wallpaperBtn = div.querySelector('button');
+  wallpaperBtn.style.height = '0px';
+  wallpaperBtn.style.opacity= '0';
+}
+
 ipcRenderer.on('refreshImages', (event, payload) => {
+  console.log("Event Received - refreshImages")
   //this code listens for the 'refreshImages' event sent in the main.js file under the createWindow func
   refreshImages(payload.imgsFolder, payload.imgsFolderFiles) //this func is defined above
 })

@@ -66,6 +66,22 @@ body{
     background-color: rgba(248, 248, 248, 0.158);
 }
 
+.splash-text{
+    display: flex;
+    font-size: 30px;
+    font-family: "Segoe UI", sans-serif, "Segoe MDL2 Assets", "Symbols", "Segoe UI Emoji";
+    font-weight: 300;
+    line-height: 1.167;
+    padding-top: 30vh;
+    text-align: center;
+    justify-content: center;
+    align-content: center;
+    vertical-align: middle;
+    position: relative;
+    height: 100vh;
+    background-color: rgba(248, 248, 248, 0.158);
+}
+
 #imgs-area{
     overflow: scroll;
     margin: 0 auto;
@@ -75,33 +91,64 @@ body{
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: flex-start;
-    padding: 0px 0px 20px 20px;
+    padding: 0px 0px 20px 0px;
 }
 
 .gallery-img {
+    border: 1px solid black;
     transition: 0.3s;
-    flex-grow: 4;
-    width: 240px;
+    width: 100%;
     height: 180px;
     max-height: 180px;
-    margin-right: 20px;
-    margin-top: 20px;
+    margin-right: 1px;
+    margin-top: 0px;
     background-color: black;
 }
 
+.btn {
+    border: none;
+    color: white;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 50px;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+.info {
+    background-color: rgba(33, 149, 243, 0.300); 
+    width: 100%; 
+    height: 0px; 
+    opacity: 0;  
+    transition: 0.5s; 
+    position: relative; 
+    bottom: 0; 
+    left: 0
+} /* Blue */
 
+.info:hover {
+    background: #0b7dda;
+}
 
 /*crude fix to a last-child flexbox issue
 prevents last child from growing to entire width;
 */
-.gallery-img:last-child{
-    flex-grow: 2;
-    max-width: 48%;
-    min-width: 48%;
-}
 
 .gallery-img:hover {
     border: 1px solid;
-    box-shadow: 5px 8px 18px rgba(136, 136, 136, 0.699);
 }
 
+::-webkit-scrollbar {
+    width: 6px;
+    background-color: black;
+} 
+ 
+::-webkit-scrollbar-thumb {
+    background-color: rgba(112, 112, 112, 0.5);
+}
+ 
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    background-color:rgba(248, 248, 248, 0.158);
+}

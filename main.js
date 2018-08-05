@@ -23,11 +23,38 @@ function createWindow () {
 
   // Create the browser window.
   win = new BrowserWindow({
-    width: 800,
-    iheight: 600,
-    icon: icon
+    width: 400,
+    height: 600,
+    icon: icon,
+    resizable: false,
+    show: false
   })
-  
+
+  let child = new BrowserWindow({
+    width: 200,
+    height: 100,
+    parent: win, 
+    modal: true, 
+    transparent: true,
+    show: false,
+    frame: false
+  })
+  child.loadFile('./loading.html')
+  child.once('ready-to-show', () => {
+    child.show()
+  })
+
+  win.on('show', () => {
+    console.log("app.getPath(home) = " + app.getPath("home"));
+    let fullpath = path.join(app.getPath("home"), '/appdata/local/Packages/Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy/LocalState/Assets');
+    StartWatcher(fullpath);
+  })
+
+
+  win.once('ready-to-show', () => {
+    child.close()
+    win.show()
+  })
 
   //console.log(appIcon, win)
 
@@ -35,7 +62,7 @@ function createWindow () {
   win.loadFile('./index.html')
 
   // Open the DevTools.
-  // win.webContents.openDevTools()
+  win.webContents.openDevTools()
 
   // Emitted when the window is closed.
   win.on('closed', () => {
@@ -141,10 +168,6 @@ function createImagesFolder() {
     return defaultImagesFolderPath; 
   }
 }
-
-console.log("app.getPath(home) = " + app.getPath("home"));
-var fullpath = path.join(app.getPath("home"), '/appdata/local/Packages/Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy/LocalState/Assets');
-StartWatcher(fullpath);
 
 
 function StartWatcher(fullpath){
