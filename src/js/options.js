@@ -54,16 +54,18 @@ WinJS.UI.processAll().done(function () {
 });
 
 window.onload=function(){
+  document.getElementById('openHomeBtn').addEventListener('click', openHomeBtnHandler);
   document.getElementById('openFavoritesBtn').addEventListener('click', openFavoritesBtnHandler);
-  document.getElementById('aboutSoftwareBtn').addEventListener('click', aboutSoftwareBtnHandler);
 }
+
+function openHomeBtnHandler() {
+  console.log("Sending Event - openHomeBtn")
+  ipcRenderer.send('showHomeBtn')
+}
+
 
 function openFavoritesBtnHandler() {
   console.log("Sending Event - openFavoritesBtn")
   ipcRenderer.send('showFavoritesBtn')
 }
 
-function aboutSoftwareBtnHandler() {
-  console.log("Sending Event - aboutSoftwareBtn")
-  ipcRenderer.send('showAboutInfo')
-}

@@ -1,31 +1,35 @@
-const {app, Menu, Tray, ipcMain, BrowserWindow} = require('electron')
+const {app, Menu, Tray, ipcMain, BrowserWindow, dialog, shell} = require('electron')
 const path = require('path')
 const fs = require('fs')
 const os = require('os')
 const sizeOf = require('image-size');
 const AutoLaunch = require('auto-launch');
+const pageIndex = 'index.html';
+const pageOptions = 'options.html';
 
 
-var appAutoLauncher = new AutoLaunch({
-  name: 'spotlight-saver',
-  isHidden: true,
-});
+// var appAutoLauncher = new AutoLaunch({
+//   name: 'spotlight-saver',
+//   path: app.getPath('exe'),
+//   isHidden: true,
+// });
 
-appAutoLauncher.isEnabled()
-.then(function(isEnabled){
-  if(isEnabled){
-      return;
-  }
-  appAutoLauncher.enable();
-})
-.catch(function(err){
-  console.log(err)
-});
+// appAutoLauncher.isEnabled()
+// .then(function(isEnabled){
+//   if(isEnabled){
+//       return;
+//   }
+//   appAutoLauncher.enable();
+// })
+// .catch(function(err){
+//   console.log(err)
+// });
 
   
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let win
+let win;
+let pageName;
 
 function createWindow () {
 
@@ -46,8 +50,13 @@ function createWindow () {
     height: 600,
     icon: icon,
     resizable: false,
+    backgroundColor: "#000000",
     show: false
   })
+
+  console.log("app.getPath(home) = " + app.getPath("home"));
+  let fullpath = path.join(app.getPath("home"), '/appdata/local/Packages/Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy/LocalState/Assets');
+  StartWatcher(fullpath);
 
   let child = new BrowserWindow({
     width: 200,
@@ -64,13 +73,12 @@ function createWindow () {
   })
 
   win.on('show', () => {
-    console.log("app.getPath(home) = " + app.getPath("home"));
-    let fullpath = path.join(app.getPath("home"), '/appdata/local/Packages/Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy/LocalState/Assets');
-    StartWatcher(fullpath);
+    console.log('show - ' + pageName);
   })
 
 
   win.once('ready-to-show', () => {
+    console.log('ready-to-show - ' + pageName);
     child.close()
     win.show()
   })
@@ -78,10 +86,11 @@ function createWindow () {
   //console.log(appIcon, win)
 
   // and load the index.html of the app.
-  win.loadFile('./index.html')
+  pageName = pageIndex;
+  win.loadFile('./' + pageIndex);
 
   // Open the DevTools.
-  win.webContents.openDevTools()
+  // win.webContents.openDevTools()
 
   // Emitted when the window is closed.
   win.on('closed', () => {
@@ -99,18 +108,22 @@ function createWindow () {
   Menu.setApplicationMenu(null);
 
   win.webContents.on('did-finish-load', () => {
+    console.log('did-finish-load - ' + pageName);
 
-  //fetch filenames in the images folder after it has been updated
-  var imgsFolderFiles =  fs.readdirSync(appImgsFolder);
-  
-  //payload defines the message we send to the ui window
-  var payload = {
-      imgsFolder : appImgsFolder, 
-      imgsFolderFiles : imgsFolderFiles }
+    if (pageName === pageIndex){
+      //fetch filenames in the images folder after it has been updated
+      var imgsFolderFiles =  fs.readdirSync(appImgsFolder);
       
-  //msg sent as an event called 'refresh images' with the payload
-  win.webContents.send('refreshImages', payload );
+      //payload defines the message we send to the ui window
+      var payload = {
+          imgsFolder : appImgsFolder, 
+          imgsFolderFiles : imgsFolderFiles }
+          
+      //msg sent as an event called 'refresh images' with the payload
+      win.webContents.send('refreshImages', payload );
+    }
   })
+
 }
 
 
@@ -160,7 +173,7 @@ app.on('quit', () => {
   // Note: On Windows, this event will not be emitted if the app is closed due 
   // to a shutdown/restart of the system or a user logout
   // tray.destroy()
-  console.log("!!! Quit !!! ");
+  console.log('quit - ' + pageName);
 })
 
 // In this file you can include the rest of your app's specific main process
@@ -232,26 +245,28 @@ function StartWatcher(fullpath){
 } 
 
 function updateImagesFolder(srcImgesFolder, destImgesFolder) {
-  let dimensions = sizeOf(srcImgesFolder);
-  let filename = srcImgesFolder.split('\\').pop().split('/').pop();
-  console.log('Image', filename, 'info, width:',dimensions.width, ', height:', dimensions.height);
+  fs.readFile(srcImgesFolder, (err, buf) => {
+    if (err) throw err;
+    let dimensions = sizeOf(buf);
+    let filename = srcImgesFolder.split('\\').pop().split('/').pop();
+    console.log('Image', filename, 'info, width:',dimensions.width, ', height:', dimensions.height);
 
-  let w = dimensions.width; // the width of the image from Jimp obj
-  let h = dimensions.height; //height of image from jimp obj
-  //check if image is rectangular and width is big enuf to be wallpaper && is not already in the imgs folder
-  if (h<w && w>1000 && !fsExistsSync(`${filename}.jpg`)) { 
-    console.log('Copying file', filename);
-    fs.copyFile(srcImgesFolder, path.join(destImgesFolder,`${filename}.jpg`), err => {
-      if (err) throw err;
-      console.log('success');
-    });
-  } 
+    //check if image is rectangular and width is big enuf to be wallpaper && is not already in the imgs folder
+    if (dimensions.height<dimensions.width && 
+      dimensions.widthw>1000 && !fsExistsSync(path.join(destImgesFolder,`${filename}.jpg`))) { 
+      console.log('Copying file', filename);
+      fs.copyFile(srcImgesFolder, path.join(destImgesFolder,`${filename}.jpg`), err => {
+        if (err) throw err;
+        console.log('success');
+      });
+    } 
+  });
 }
 
 
 function fsExistsSync(filepath) {
   try {
-    fs.accessSync(filepath);
+    fs.accessSync(filepath);s
     return true;
   } catch (e) {
     return false;
@@ -261,3 +276,35 @@ function fsExistsSync(filepath) {
 ipcMain.on('changeDesktopWallpaper',(event, imgPath) => {
   console.log("changeDesktopWallpaper event");
 })
+
+ipcMain.on('showHomeBtn', event => {
+  pageName = pageIndex;
+  win.loadFile('./' + pageIndex)
+})
+
+ipcMain.on('showFavoritesBtn', event => {
+  shell.openItem(appImgsFolder);
+})
+
+ipcMain.on('showAboutInfo', event => {
+//   const options = {
+//     type: 'info',
+//     title: 'Windows Lockscreen Image Saver',
+//     message: 'About Software',
+//     detail: 
+// `
+// App Version   :   1.0.0
+// Developed by  :   James Kimani
+//                 https://github.com/JamzyKimani
+//                 https://twitter.com/JamzyKimani
+// `   ,
+//     buttons: ['OK']
+//   }
+//   dialog.showMessageBox(options);
+  pageName = pageOptions;
+  win.loadFile('./' + pageOptions);
+})
+
+// process.on('uncaughtException', (err) => {
+//   console.log('whoops! there was an error');
+// });
