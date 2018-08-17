@@ -1,11 +1,13 @@
+'use strict';
+
 const {app, Menu, Tray, ipcMain, BrowserWindow, dialog, shell} = require('electron')
 const path = require('path')
 const fs = require('fs')
 const os = require('os')
 const sizeOf = require('image-size');
 const AutoLaunch = require('auto-launch');
+const wallpaper = require('wallpaper');
 const pageIndex = 'index.html';
-const pageOptions = 'options.html';
 
 
 // var appAutoLauncher = new AutoLaunch({
@@ -34,7 +36,7 @@ let pageName;
 function createWindow () {
 
   var icon = path.join(__dirname, 'assets/icons/icon.png')
-  tray = new Tray(icon)
+  const tray = new Tray(icon)
   const contextMenu = Menu.buildFromTemplate([
     {label: 'Item1', type: 'radio'},
     {label: 'Item2', type: 'radio'},
@@ -90,7 +92,7 @@ function createWindow () {
   win.loadFile('./' + pageIndex);
 
   // Open the DevTools.
-  // win.webContents.openDevTools()
+  win.webContents.openDevTools()
 
   // Emitted when the window is closed.
   win.on('closed', () => {
@@ -119,8 +121,8 @@ function createWindow () {
           imgsFolder : appImgsFolder, 
           imgsFolderFiles : imgsFolderFiles }
           
-      //msg sent as an event called 'refresh images' with the payload
-      win.webContents.send('refreshImages', payload );
+      //msg sent as an event called 'showLocalImagess' with the payload
+      win.webContents.send('showLocalImages', payload );
     }
   })
 
@@ -144,7 +146,10 @@ if (shouldQuit) {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
-  createWindow()
+  createWindow();
+  wallpaper.get().then(imagePath => {
+    console.log('Current wallpaper = ' + imagePath);
+  });
   win.webContents.on('did-finish-load', () => {
     win.webContents.send('ping', 'whoooooooh!')
   })
@@ -253,7 +258,7 @@ function updateImagesFolder(srcImgesFolder, destImgesFolder) {
 
     //check if image is rectangular and width is big enuf to be wallpaper && is not already in the imgs folder
     if (dimensions.height<dimensions.width && 
-      dimensions.widthw>1000 && !fsExistsSync(path.join(destImgesFolder,`${filename}.jpg`))) { 
+      dimensions.width>1000 && !fsExistsSync(path.join(destImgesFolder,`${filename}.jpg`))) { 
       console.log('Copying file', filename);
       fs.copyFile(srcImgesFolder, path.join(destImgesFolder,`${filename}.jpg`), err => {
         if (err) throw err;
@@ -266,7 +271,7 @@ function updateImagesFolder(srcImgesFolder, destImgesFolder) {
 
 function fsExistsSync(filepath) {
   try {
-    fs.accessSync(filepath);s
+    fs.accessSync(filepath);
     return true;
   } catch (e) {
     return false;
@@ -275,15 +280,28 @@ function fsExistsSync(filepath) {
 
 ipcMain.on('changeDesktopWallpaper',(event, imgPath) => {
   console.log("changeDesktopWallpaper event");
+  wallpaper.set(imgPath)
 })
 
 ipcMain.on('showHomeBtn', event => {
-  pageName = pageIndex;
-  win.loadFile('./' + pageIndex)
+
+  if (pageName === pageIndex){
+    //fetch filenames in the images folder after it has been updated
+    var imgsFolderFiles =  fs.readdirSync(appImgsFolder);
+    
+    //payload defines the message we send to the ui window
+    var payload = {
+        imgsFolder : appImgsFolder, 
+        imgsFolderFiles : imgsFolderFiles }
+        
+    //msg sent as an event called 'showLocalImagess' with the payload
+    win.webContents.send('showLocalImages', payload );
+  }
 })
 
 ipcMain.on('showFavoritesBtn', event => {
-  shell.openItem(appImgsFolder);
+  //msg sent as an event called 'showRemoteImages' 
+  win.webContents.send('showRemoteImages');
 })
 
 ipcMain.on('showAboutInfo', event => {
@@ -301,8 +319,9 @@ ipcMain.on('showAboutInfo', event => {
 //     buttons: ['OK']
 //   }
 //   dialog.showMessageBox(options);
-  pageName = pageOptions;
-  win.loadFile('./' + pageOptions);
+
+  //msg sent as an event called 'showOptions' 
+  win.webContents.send('showOptions');
 })
 
 // process.on('uncaughtException', (err) => {

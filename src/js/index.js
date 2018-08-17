@@ -1,7 +1,9 @@
-const {ipcRenderer} = require('electron');
-const WinJS = require('winjs')
+'use strict';
 
-function refreshImages(imagesFolder, imgsFolderFiles) {
+const {ipcRenderer} = require('electron');
+const WinJS = require('winjs');
+
+function showLocalImages(imagesFolder, imgsFolderFiles) {
   var imgsHTML = '';
   if (imgsFolderFiles.length>0) { // if images folder has files 
       //loop through each of the files 
@@ -21,7 +23,20 @@ function refreshImages(imagesFolder, imgsFolderFiles) {
                   </div>`
   }
 
-  var imgsArea = document.getElementById('imgs-area');
+  var imgsArea = document.getElementById('content-area');
+  if (imgsHTML != '') { imgsArea.innerHTML = imgsHTML; }
+}
+
+function showOptions() {
+  var imgsHTML = '';
+
+  //make a div tag that renders the images as the div background image
+  imgsHTML += `<div class="center-msg" id="msg_area">
+                <p>No Windows Spotlight Images were found on your computer. </p>
+                <p>go to personalization settings and check if Spotlight is enabled under lock screen tab and <a href="#" onclick="refreshImages()">refresh</a></p>
+              </div>`
+
+  var imgsArea = document.getElementById('content-area');
   if (imgsHTML != '') { imgsArea.innerHTML = imgsHTML; }
 }
 
@@ -42,10 +57,21 @@ function hideWallpaperBtn(div) {
   wallpaperBtn.style.opacity= '0';
 }
 
-ipcRenderer.on('refreshImages', (event, payload) => {
-  console.log("Event Received - refreshImages")
-  //this code listens for the 'refreshImages' event sent in the main.js file under the createWindow func
-  refreshImages(payload.imgsFolder, payload.imgsFolderFiles) //this func is defined above
+ipcRenderer.on('showLocalImages', (event, payload) => {
+  console.log("Event Received - showLocalImages")
+  //this code listens for the 'showLocalImages' event sent in the main.js
+  showLocalImages(payload.imgsFolder, payload.imgsFolderFiles);
+})
+
+ipcRenderer.on('showRemoteImages', (event) => {
+  console.log("Event Received - showRemoteImages")
+  //this code listens for the 'showRemoteImages' event sent in the main.js
+})
+
+ipcRenderer.on('showOptions', (event) => {
+  console.log("Event Received - showOptions")
+  showOptions();
+  //this code listens for the 'showOptions' event sent in the main.js
 })
 
 WinJS.UI.processAll().done(function () {
@@ -54,8 +80,14 @@ WinJS.UI.processAll().done(function () {
 });
 
 window.onload=function(){
+  document.getElementById('openHomeBtn').addEventListener('click', openHomeBtnHandler);
   document.getElementById('openFavoritesBtn').addEventListener('click', openFavoritesBtnHandler);
   document.getElementById('aboutSoftwareBtn').addEventListener('click', aboutSoftwareBtnHandler);
+}
+
+function openHomeBtnHandler() {
+  console.log("Sending Event - openHomeBtnHandler")
+  ipcRenderer.send('showHomeBtn')
 }
 
 function openFavoritesBtnHandler() {
