@@ -1,9 +1,8 @@
 'use strict';
 
-const {app, Menu, Tray, ipcMain, BrowserWindow, dialog, shell} = require('electron')
+const {app, Menu, Tray, ipcMain, BrowserWindow} = require('electron')
 const path = require('path')
 const fs = require('fs')
-const os = require('os')
 const sizeOf = require('image-size');
 const AutoLaunch = require('auto-launch');
 const wallpaper = require('wallpaper');

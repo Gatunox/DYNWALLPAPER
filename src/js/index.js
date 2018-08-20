@@ -2,6 +2,7 @@
 
 const {ipcRenderer} = require('electron');
 const WinJS = require('winjs');
+const fs = require('fs');
 
 function showLocalImages(imagesFolder, imgsFolderFiles) {
   var imgsHTML = '';
@@ -16,7 +17,7 @@ function showLocalImages(imagesFolder, imgsFolderFiles) {
       });
 
   } else {
-       // show a message if the user does not have any pics ... usually because Windows Spotlight is not activated
+
       imgsHTML += `<div class="center-msg" id="msg_area">
                       <p>No Windows Spotlight Images were found on your computer. </p>
                       <p>go to personalization settings and check if Spotlight is enabled under lock screen tab and <a href="#" onclick="refreshImages()">refresh</a></p>
@@ -28,16 +29,15 @@ function showLocalImages(imagesFolder, imgsFolderFiles) {
 }
 
 function showOptions() {
-  var imgsHTML = '';
+  fs.readFile('parameters.html', 'utf8', function(err, data) {
+    if (err) throw err;
+    var imgsHTML = '';
+    imgsHTML += data;
 
-  //make a div tag that renders the images as the div background image
-  imgsHTML += `<div class="center-msg" id="msg_area">
-                <p>No Windows Spotlight Images were found on your computer. </p>
-                <p>go to personalization settings and check if Spotlight is enabled under lock screen tab and <a href="#" onclick="refreshImages()">refresh</a></p>
-              </div>`
-
-  var imgsArea = document.getElementById('content-area');
-  if (imgsHTML != '') { imgsArea.innerHTML = imgsHTML; }
+    var imgsArea = document.getElementById('content-area');
+    if (imgsHTML != '') { imgsArea.innerHTML = imgsHTML; }
+    // enable disable elements
+  });
 }
 
 function setAsWallpaper(file) {
