@@ -15,7 +15,6 @@
     "auto-launch": "^5.0.5",
     "chokidar": "^2.0.4",
     "debug": "^3.1.0",
-    "electron-titlebar-windows": "^3.0.0",
     "image-size": "^0.6.3",
     "pretty-checkbox": "^3.0.3",
     "wallpaper": "^3.0.0",
