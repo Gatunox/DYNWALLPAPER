@@ -80,9 +80,15 @@ WinJS.UI.processAll().done(function () {
 });
 
 window.onload=function(){
+  document.getElementById('closeBtn').addEventListener('click', closeBtnHandler);
   document.getElementById('openHomeBtn').addEventListener('click', openHomeBtnHandler);
   document.getElementById('openFavoritesBtn').addEventListener('click', openFavoritesBtnHandler);
   document.getElementById('aboutSoftwareBtn').addEventListener('click', aboutSoftwareBtnHandler);
+}
+
+function closeBtnHandler() {
+  console.log("Sending Event - closeBtnHandler")
+  ipcRenderer.send('closeBtn')
 }
 
 function openHomeBtnHandler() {

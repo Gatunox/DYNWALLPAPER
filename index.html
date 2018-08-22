@@ -16,8 +16,9 @@
         <div id="app">
             <div class="splitView" data-win-control="WinJS.UI.SplitView" data-win-options="{panePlacement:'right'}">
                 <!-- Pane area -->
-                <div>
+                <div style="-webkit-app-region: drag">
                     <div class="nav-commands">
+                        <div id="closeBtn" data-win-control="WinJS.UI.NavBarCommand" data-win-options="{ label: 'Close', icon: 'cancel'}"></div>
                         <div id="openHomeBtn" data-win-control="WinJS.UI.NavBarCommand" data-win-options="{ label: 'Home', icon: 'home'}"></div>
                         <div id="openFavoritesBtn" data-win-control="WinJS.UI.NavBarCommand" data-win-options="{ label: 'Favorite', icon: 'favorite'}"></div>
                         <div id="aboutSoftwareBtn" data-win-control="WinJS.UI.NavBarCommand" data-win-options="{ label: 'Settings', icon: 'settings'}"></div>

@@ -30,19 +30,23 @@ const pageIndex = 'index.html';
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
+let icon;
 let pageName;
+let tray;
 
 function createWindow () {
 
-  var icon = path.join(__dirname, 'assets/icons/icon.png')
-  const tray = new Tray(icon)
+  icon = path.join(__dirname, 'assets/icons/icon.png')
+
+  tray = new Tray(icon)
+  tray.setTitle('hello world')
+  // const tray = new Tray(icon)
   const contextMenu = Menu.buildFromTemplate([
-    {label: 'Item1', type: 'radio'},
-    {label: 'Item2', type: 'radio'},
-    {label: 'Item3', type: 'radio', checked: true},
-    {label: 'Item4', type: 'radio'}
+    {role: 'quit', label: 'Quit', type: 'normal'},
+    {role: 'minimize', label: 'Minimize', type: 'normal'},
+    {role: 'reload', label: 'Show', type: 'normal'}
   ])
-  tray.setToolTip('This is my application.')
+  tray.setToolTip('DynWallpaper')
   tray.setContextMenu(contextMenu)
 
   // Create the browser window.
@@ -52,8 +56,11 @@ function createWindow () {
     icon: icon,
     resizable: false,
     backgroundColor: "#000000",
-    show: false
+    show: false,
+    frame: false
   })
+
+  win.setMaximizable(false);
 
   console.log("app.getPath(home) = " + app.getPath("home"));
   let fullpath = path.join(app.getPath("home"), '/appdata/local/Packages/Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy/LocalState/Assets');
@@ -91,7 +98,7 @@ function createWindow () {
   win.loadFile('./' + pageIndex);
 
   // Open the DevTools.
-  win.webContents.openDevTools()
+  // win.webContents.openDevTools()
 
   // Emitted when the window is closed.
   win.on('closed', () => {
@@ -125,6 +132,8 @@ function createWindow () {
     }
   })
 
+  
+  
 }
 
 
@@ -152,6 +161,8 @@ app.on('ready', () => {
   win.webContents.on('did-finish-load', () => {
     win.webContents.send('ping', 'whoooooooh!')
   })
+
+  
 })
 
 // Quit when all windows are closed.
@@ -280,6 +291,10 @@ function fsExistsSync(filepath) {
 ipcMain.on('changeDesktopWallpaper',(event, imgPath) => {
   console.log("changeDesktopWallpaper event");
   wallpaper.set(imgPath)
+})
+
+ipcMain.on('closeBtn', event => {
+  win.minimize();
 })
 
 ipcMain.on('showHomeBtn', event => {
