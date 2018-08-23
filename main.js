@@ -42,13 +42,18 @@ function createWindow () {
   tray.setTitle('hello world')
   // const tray = new Tray(icon)
   const contextMenu = Menu.buildFromTemplate([
-    {role: 'quit', label: 'Quit', type: 'normal'},
-    {role: 'minimize', label: 'Minimize', type: 'normal'},
-    {role: 'reload', label: 'Show', type: 'normal'}
+    {role: 'quit', label: 'Quit Application', type: 'normal',
+    click() {
+      console.log('Tray Quit Clicked');
+     }}
   ])
   tray.setToolTip('DynWallpaper')
   tray.setContextMenu(contextMenu)
 
+  tray.on('click', () => {
+    win.isVisible() ? win.hide() : win.show()
+  })
+ 
   // Create the browser window.
   win = new BrowserWindow({
     width: 400,
@@ -81,8 +86,15 @@ function createWindow () {
   })
 
   win.on('show', () => {
+    tray.setHighlightMode('always')
     console.log('show - ' + pageName);
   })
+
+  win.on('hide', () => {
+    tray.setHighlightMode('never')
+    console.log('hide - ' + pageName);
+  })
+
 
 
   win.once('ready-to-show', () => {
@@ -294,7 +306,12 @@ ipcMain.on('changeDesktopWallpaper',(event, imgPath) => {
 })
 
 ipcMain.on('closeBtn', event => {
-  win.minimize();
+  tray.displayBalloon({
+    icon: icon,
+    title: "Application still running...",
+    content: "Right click on the tray icon to quit"
+  });
+  win.hide();
 })
 
 ipcMain.on('showHomeBtn', event => {
