@@ -40,6 +40,11 @@ function showOptions() {
   });
 }
 
+function openImagesFolder() {
+  console.log('openImagesFolder');
+  ipcRenderer.send('openImagesFolder');
+}
+
 function setAsWallpaper(file) {
   console.log('will set '+file+' as wallpaper');
   ipcRenderer.send('changeDesktopWallpaper',  file);

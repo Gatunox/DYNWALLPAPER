@@ -1,56 +1,66 @@
-<div>
-    <div class="container">
-        <h3 class="win-h3">Preferences</h3>
-        <p></p>
-        <h6 class="win-h6">Microsoft Windows Options</h6>
-        <div>
-        <div class="row">
-            <div class="pretty p-default">
-            <input type="checkbox" />
-            <div class="state">
-                <label>Auto Run</label>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./src/css/main.css" type="text/css" />
+</head>
+<body>
+    <div>
+        <div class="container">
+            <h3 class="win-h3">Preferences</h3>
+            <h6 id="version-area" class="win-h6">v1.0.0</h6>
+            <p></p>
+            <h6 class="win-h6">Microsoft Windows Options</h6>
+            <div>
+                <div class="row">
+                    <div class="pretty p-default">
+                    <input type="checkbox" />
+                    <div class="state">
+                        <label>Auto Run</label>
+                    </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="pretty p-default">
+                    <input type="checkbox" />
+                    <div class="state">
+                        <label>Sync Spothlight Image</label>
+                    </div>
+                    </div>
+                </div>
+                <p></p>
+                <div class="row">
+                    <div class="pretty p-default">
+                    <input type="checkbox" />
+                    <div class="state">
+                        <label>Start Minimized</label>
+                    </div>
+                    </div>
+                </div>
+                <p></p>
+                <h6 class="win-h6">Custom Radio Buttons</h6>
+                <div class="row row-centered">
+                    <div class="pretty p-default p-round">
+                    <input type="radio" name="radio1">
+                        <div class="state">
+                            <label>Male</label>
+                        </div>
+                    </div>
+                    <div class="pretty p-default p-round">
+                    <input type="radio" name="radio1">
+                        <div class="state">
+                            <label>Female</label>
+                        </div>
+                    </div>
+                    <div class="pretty p-default p-round">
+                        <input type="radio" name="radio1">
+                        <div class="state">
+                            <label>Special</label>
+                        </div>
+                    </div>
+                </div>
+                <p></p>
+                <h6 class="win-h6">Images</h6>
+                <button class="button" onclick="openImagesFolder()">Open Folder</button>
             </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="pretty p-default">
-            <input type="checkbox" />
-            <div class="state">
-                <label>Sync Spothlight Image</label>
-            </div>
-            </div>
-        </div>
-        <p></p>
-        <div class="row">
-            <div class="pretty p-default">
-            <input type="checkbox" />
-            <div class="state">
-                <label>Start Minimized</label>
-            </div>
-            </div>
-        </div>
-        <p></p>
-        <h6 class="win-h6">Custom Radio Buttons</h6>
-        <div class="row row-centered">
-            <div class="pretty p-default p-round">
-            <input type="radio" name="radio1">
-            <div class="state">
-                <label>Male</label>
-            </div>
-            </div>
-            <div class="pretty p-default p-round">
-            <input type="radio" name="radio1">
-            <div class="state">
-                <label>Female</label>
-            </div>
-            </div>
-            <div class="pretty p-default p-round">
-            <input type="radio" name="radio1">
-            <div class="state">
-                <label>Special</label>
-            </div>
-            </div>
-        </div>
         </div>
     </div>
-</div>
+</body>

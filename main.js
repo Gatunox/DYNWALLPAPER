@@ -1,6 +1,6 @@
 'use strict';
 
-const {app, Menu, Tray, ipcMain, BrowserWindow} = require('electron')
+const {app, Menu, Tray, ipcMain, shell, BrowserWindow} = require('electron')
 const path = require('path')
 const fs = require('fs')
 const sizeOf = require('image-size');
@@ -315,7 +315,6 @@ ipcMain.on('closeBtn', event => {
 })
 
 ipcMain.on('showHomeBtn', event => {
-
   if (pageName === pageIndex){
     //fetch filenames in the images folder after it has been updated
     var imgsFolderFiles =  fs.readdirSync(appImgsFolder);
@@ -353,6 +352,10 @@ ipcMain.on('showAboutInfo', event => {
 
   //msg sent as an event called 'showOptions' 
   win.webContents.send('showOptions');
+})
+
+ipcMain.on('openImagesFolder', event => {
+  shell.openItem(appImgsFolder);
 })
 
 // process.on('uncaughtException', (err) => {
